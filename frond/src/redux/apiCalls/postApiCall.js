@@ -148,3 +148,15 @@ export function getAllPosts() {
     }
   };
 }
+
+// Get Liked Users
+export function getLikedUsers(postId) {
+  return async (dispatch) => {
+    try {
+      const { data } = await request.get(`/api/posts/liked-users/${postId}`);
+      dispatch(postActions.setLikedUsers(data));
+    } catch (error) {
+      toast.error(error.response.data.message);
+    }
+  };
+}

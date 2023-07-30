@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useParams,useNavigate } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import "./post-details.css";
 import { toast } from "react-toastify";
 import AddComment from "../../components/comments/AddComment";
@@ -23,6 +23,7 @@ const PostDetails = () => {
 
   const [file, setFile] = useState(null);
   const [updatePost, setUpdatePost] = useState(false);
+  const [likedUser, setLikedUser] = useState(""); // حالة اسم المستخدم الذي قام بالإعجاب
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -36,7 +37,7 @@ const PostDetails = () => {
 
     const formData = new FormData();
     formData.append("image", file);
-    dispatch(updatePostImage(formData,post?._id));
+    dispatch(updatePostImage(formData, post?._id));
   };
 
   const navigate = useNavigate();
@@ -56,6 +57,20 @@ const PostDetails = () => {
       }
     });
   };
+
+  useEffect(() => {
+    // تحديث حالة اسم المستخدم الذي قام بالإعجاب عند تغيير الإعجابات
+    if (post?.likes && post.likes.length > 0) {
+      const likedUser = post.likes.find((like) => like === user?._id);
+      if (likedUser) {
+        setLikedUser(post.user.username);
+      } else {
+        setLikedUser("");
+      }
+    } else {
+      setLikedUser("");
+    }
+  }, [post?.likes, user?._id]);
 
   return (
     <section className="post-details">
@@ -101,7 +116,6 @@ const PostDetails = () => {
       </div>
       <p className="post-details-description">
         {post?.description}
-       
       </p>
       <div className="post-details-icon-wrapper">
         <div>
@@ -109,13 +123,14 @@ const PostDetails = () => {
             <i
               onClick={() => dispatch(toggleLikePost(post?._id))}
               className={
-                post?.likes.includes(user?._id)
+                post?.likes && post.likes.includes(user?._id)
                   ? "bi bi-hand-thumbs-up-fill"
                   : "bi bi-hand-thumbs-up"
               }
             ></i>
           )}
-          <small>{post?.likes.length} likes</small>
+          {likedUser && <div className="liked-by">{likedUser}</div>}
+          <small>{post?.likes ? post.likes.length : 0} likes</small>
         </div>
         {user?._id === post?.user?._id && (
           <div>

@@ -8,7 +8,8 @@ const postSlice = createSlice({
     postsCate: [],
     loading: false,
     isPostCreated: false,
-    post:null,
+    post: null,
+    likedUsers: [],
   },
   reducers: {
     setPosts(state, action) {
@@ -33,29 +34,32 @@ const postSlice = createSlice({
     clearIsPostCreated(state) {
       state.isPostCreated = false;
     },
-    setPost(state,action) {
+    setPost(state, action) {
       state.post = action.payload;
     },
-    setLike(state,action) {
+    setLike(state, action) {
       state.post.likes = action.payload.likes;
     },
-    deletePost(state,action) {
-      state.posts = state.posts.filter(p => p._id !== action.payload);
+    setLikedUsers(state, action) {
+      state.likedUsers = action.payload;
     },
-    addCommentToPost(state,action) {
+    deletePost(state, action) {
+      state.posts = state.posts.filter((p) => p._id !== action.payload);
+    },
+    addCommentToPost(state, action) {
       state.post.comments.push(action.payload);
     },
-    updateCommentPost(state,action) {
-      state.post.comments = state.post.comments.map(commment => 
+    updateCommentPost(state, action) {
+      state.post.comments = state.post.comments.map((commment) =>
         commment._id === action.payload._id ? action.payload : commment
-      )
+      );
     },
     deleteCommentFromPost(state, action) {
-      const comment = state.post.comments.find(c => c._id === action.payload);
+      const comment = state.post.comments.find((c) => c._id === action.payload);
       const commentIndex = state.post.comments.indexOf(comment);
 
       state.post.comments.splice(commentIndex, 1);
-    }
+    },
   },
 });
 
